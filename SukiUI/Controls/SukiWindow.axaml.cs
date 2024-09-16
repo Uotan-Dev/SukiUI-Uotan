@@ -92,6 +92,15 @@ public class SukiWindow : Window
         set => SetValue(CanMinimizeProperty, value);
     }
 
+    public static readonly StyledProperty<bool> CanMaximizeProperty =
+        AvaloniaProperty.Register<SukiWindow, bool>(nameof(CanMaximize), defaultValue: true);
+
+    public bool CanMaximize
+    {
+        get => GetValue(CanMaximizeProperty);
+        set => SetValue(CanMaximizeProperty, value);
+    }
+
     public static readonly StyledProperty<bool> CanMoveProperty =
         AvaloniaProperty.Register<SukiWindow, bool>(nameof(CanMove), defaultValue: true);
 
@@ -185,13 +194,13 @@ public class SukiWindow : Window
 
     private void SetSystemDecorationsBasedOnPlatform()
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            this.SystemDecorations = SystemDecorations.Full;
+            this.SystemDecorations = SystemDecorations.BorderOnly;
         }
         else
         {
-            this.SystemDecorations = SystemDecorations.BorderOnly;
+            this.SystemDecorations = SystemDecorations.Full;
         }
     }
 
@@ -236,7 +245,7 @@ public class SukiWindow : Window
                     {
                         case 533:
                             if (!pointerOnMaxButton) break;
-                            if (!CanResize) break;
+                            if (!CanMaximize) break;
                             WindowState = WindowState == WindowState.Maximized
                                 ? WindowState.Normal
                                 : WindowState.Maximized;
@@ -293,7 +302,7 @@ public class SukiWindow : Window
 
     private void OnMaximizeButtonClicked(object? sender, RoutedEventArgs args)
     {
-        if (!CanResize) return;
+        if (!CanMaximize) return;
         WindowState = WindowState == WindowState.Maximized
                     ? WindowState.Normal
                     : WindowState.Maximized;
@@ -302,7 +311,7 @@ public class SukiWindow : Window
     private void OnWindowStateChanged(WindowState state)
     {
         if (state == WindowState.FullScreen)
-            CanResize = CanMove = false;
+            CanMaximize = CanMove = false;
         
         if (state == WindowState.Maximized)
             Margin = new Thickness(7);
